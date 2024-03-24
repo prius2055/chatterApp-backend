@@ -23,21 +23,40 @@ class Users::SessionsController < Devise::SessionsController
   #   super
   # end
 
+<<<<<<< HEAD
+=======
+  # protected
+
+  # If you have extra params to permit, append them to the sanitizer.
+  # def configure_sign_in_params
+  #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
+  # end
+
+>>>>>>> master
   private
 
   def respond_with(current_user, _opts = {})
     render json: {
+<<<<<<< HEAD
       status: { 
         code: 200, message: 'Logged in successfully.',
+=======
+      status: { code: 200, message: 'Logged in successfully.',
+>>>>>>> master
         data: { user: UserSerializer.new(current_user).serializable_hash[:data][:attributes] }
       }
     }, status: :ok
   end
+<<<<<<< HEAD
   def respond_to_on_destroy
     if request.headers['Authorization'].present?
       jwt_payload = JWT.decode(request.headers['Authorization'].split(' ').last, Rails.application.credentials.devise_jwt_secret_key!).first
       current_user = User.find(jwt_payload['sub'])
     end
+=======
+
+  def respond_to_on_destroy
+>>>>>>> master
     
     if current_user
       render json: {
@@ -45,6 +64,10 @@ class Users::SessionsController < Devise::SessionsController
         message: 'Logged out successfully.'
       }, status: :ok
     else
+<<<<<<< HEAD
+=======
+      
+>>>>>>> master
       render json: {
         status: 401,
         message: "Couldn't find an active session."
@@ -52,10 +75,14 @@ class Users::SessionsController < Devise::SessionsController
     end
   end
 
+<<<<<<< HEAD
   # protected
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+=======
+
+>>>>>>> master
 end
