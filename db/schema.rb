@@ -10,7 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_22_175712) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_17_231814) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "devise_api_tokens", force: :cascade do |t|
+    t.string "resource_owner_type", null: false
+    t.bigint "resource_owner_id", null: false
+    t.string "access_token", null: false
+    t.string "refresh_token"
+    t.integer "expires_in", null: false
+    t.datetime "revoked_at"
+    t.string "previous_refresh_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["access_token"], name: "index_devise_api_tokens_on_access_token"
+    t.index ["previous_refresh_token"], name: "index_devise_api_tokens_on_previous_refresh_token"
+    t.index ["refresh_token"], name: "index_devise_api_tokens_on_refresh_token"
+    t.index ["resource_owner_type", "resource_owner_id"], name: "index_devise_api_tokens_on_resource_owner"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -21,7 +40,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_22_175712) do
     t.datetime "updated_at", null: false
     t.string "firstname"
     t.string "lastname"
+    t.boolean "admin", default: false
     t.string "jti", null: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

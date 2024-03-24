@@ -1,19 +1,11 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-<<<<<<< HEAD
   include RackSessionsFix
   respond_to :json
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
-=======
-  # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
- include RackSessionsFix
-  skip_before_action :verify_authenticity_token
-  respond_to :json
->>>>>>> master
   # GET /resource/sign_up
   # def new
   #   super
@@ -78,14 +70,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
         status: {code: 200, message: 'Signed up successfully.'},
         data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
       }
-<<<<<<< HEAD
     else
       render json: {
-=======
-
-      else
-        render json: {
->>>>>>> master
         status: {message: "User couldn't be created successfully. #{current_user.errors.full_messages.to_sentence}"}
       }, status: :unprocessable_entity
     end
