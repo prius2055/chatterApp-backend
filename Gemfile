@@ -49,7 +49,7 @@ group :development do
 end
 
 gem 'devise'
-gem 'devise-jwt'
+gem 'devise-jwt', '0.10.0 '
 gem 'jsonapi-serializer'
 gem "rack-cors"
 
