@@ -1,7 +1,7 @@
 class Api::V1::PostsController < ApplicationController
-
+skip_before_action :authenticate_user!, only: [:index]
  def index
-    @posts = Property.all
+    @posts = Post.all
     render json: @posts
   end
 
@@ -14,7 +14,7 @@ class Api::V1::PostsController < ApplicationController
     @post = Post.new(post_params)
 
     if @post.save
-      render json: { status: 'Success', message: 'Post created successfully' }, status: :created
+      render json: { status: '200', message: 'Post created successfully' }, status: :created
     else
       render json: { errors:@post.errors.full_messages }, status: :unprocessable_entity
     end
@@ -33,6 +33,6 @@ class Api::V1::PostsController < ApplicationController
   private
 
   def post_params
-    params.require(:property).permit(:topic, :content)
+    params.require(:post).permit(:user_id, :author_name, :topic, :content)
   end
 end
