@@ -10,11 +10,11 @@ Rails.application.routes.draw do
   }
 
   get 'currentuser', to: 'current_user#index'
-  # get '/api/v1/posts', to: '/api/v1/post#index'
+
 
   namespace :api do
     namespace :v1 do
-      resources :posts, only:[:index]
+      resources :posts
     end
   end
 
