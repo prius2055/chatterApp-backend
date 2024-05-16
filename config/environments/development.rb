@@ -3,6 +3,12 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+#   Rails.application.routes.default_url_options = {
+#   host: 'https://prius2055awsbucket.s3.eu-north-1.amazonaws.com/'
+# }
+
+Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
@@ -31,7 +37,8 @@ Rails.application.configure do
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # config.active_storage.service = :local
+  config.active_storage.service = :amazon
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
@@ -64,4 +71,6 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
 config.action_mailer.default_url_options = { host: 'localhost', port: 3001}
+
+
 end

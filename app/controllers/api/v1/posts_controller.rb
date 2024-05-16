@@ -1,9 +1,26 @@
 class Api::V1::PostsController < ApplicationController
+skip_before_action :authenticate_user!, only: [:index]
+#  def index
+#     @posts = Post.includes(:user).all.with_attached_post_image
+#     render json: @posts.map { |post|
+#       post.as_json.merge({ post_image: url_for(post.post_image) })
+#     }
+#       # render json: @posts, methods: :post_image_url
+#       # render json: @posts, methods: :post_image
+#       # render json: @posts, include: ['post_image']
+#   end
 
- def index
-    @posts = Property.all
-    render json: @posts
+def index
+    @posts = Post.includes(:user).all.with_attached_post_image
+    render json: @posts.map { |post|
+      post.as_json.merge({
+        post_image_url: post.post_image.attached? ? url_for(post.post_image) : nil,
+        user: post.user.as_json(only: [:id, :firstname, :lastname, :email]) # Adjust attributes as needed
+      })
+    }
   end
+
+
 
   def show
     @post = Post.find(params[:id])
@@ -12,9 +29,9 @@ class Api::V1::PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-
     if @post.save
-      render json: { status: 'Success', message: 'Post created successfully' }, status: :created
+      render json:PostSerializer.new(@post).serializable_hash[:data][:attributes], status: '200', message: 'Post created successfully'
+     
     else
       render json: { errors:@post.errors.full_messages }, status: :unprocessable_entity
     end
@@ -33,6 +50,7 @@ class Api::V1::PostsController < ApplicationController
   private
 
   def post_params
-    params.require(:property).permit(:topic, :content)
+    # params.require(:post).permit(:user_id, :author_name, :topic, :content, :post_image)
+    params.require(:post).permit(:user_id, :topic, :content, :post_image)
   end
 end
