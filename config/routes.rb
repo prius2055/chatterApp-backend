@@ -10,11 +10,11 @@ Rails.application.routes.draw do
   }
 
   get 'currentuser', to: 'current_user#index'
-
+  
 
   namespace :api do
     namespace :v1 do
-      resources :posts
+      resources :posts, only: [:index, :show]
     end
   end
 
@@ -22,12 +22,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users do
-        resources :posts do
+        resources :posts, except: [:index, :show] do
           resources :comments
-          resources :likes
+          resources :likes, except: [:destroy, :show, :update]
         end
       end
+      delete '/users/:user_id/posts/:post_id/like', to: 'likes#destroy', as: 'user_post_like'
     end
-
   end
 end

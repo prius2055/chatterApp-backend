@@ -1,21 +1,22 @@
 class Api::V1::PostsController < ApplicationController
-skip_before_action :authenticate_user!, only: [:index]
-#  def index
-#     @posts = Post.includes(:user).all.with_attached_post_image
-#     render json: @posts.map { |post|
-#       post.as_json.merge({ post_image: url_for(post.post_image) })
-#     }
-#       # render json: @posts, methods: :post_image_url
-#       # render json: @posts, methods: :post_image
-#       # render json: @posts, include: ['post_image']
-#   end
+skip_before_action :authenticate_user!, only: [:index, :show]
 
 def index
-    @posts = Post.includes(:user).all.with_attached_post_image
+    @posts = Post.includes(:user, :comments).all.with_attached_post_image
     render json: @posts.map { |post|
       post.as_json.merge({
         post_image_url: post.post_image.attached? ? url_for(post.post_image) : nil,
-        user: post.user.as_json(only: [:id, :firstname, :lastname, :email]) # Adjust attributes as needed
+        posterDetail: post.user.as_json(only: [:id, :firstname, :lastname, :email]),
+        comments:post.comments.map {|comment|
+          comment.as_json.merge({
+            commenterDetail:comment.user.as_json(only: [:firstname, :lastname, :email])
+            })
+        },
+        likes:post.likes.map {|like|
+          like.as_json.merge({
+            likeDetail:like.user.as_json(only: [:firstname, :lastname, :email])
+            })
+        }
       })
     }
   end
@@ -23,8 +24,21 @@ def index
 
 
   def show
-    @post = Post.find(params[:id])
-    render json: @post
+    @post = Post.includes(:user).find(params[:id])
+    render json:  @post.as_json.merge({
+        post_image_url: @post.post_image.attached? ? url_for(@post.post_image) : nil,
+        posterDetail: @post.user.as_json(only: [:id, :firstname, :lastname, :email]),
+         comments:@post.comments.map {|comment|
+          comment.as_json.merge({
+            commenterDetail:comment.user.as_json(only: [:firstname, :lastname, :email])
+            })
+        },
+         likes:@post.likes.map {|like|
+          like.as_json.merge({
+            likerDetail:like.user.as_json(only: [:firstname, :lastname, :email])
+            })
+        }
+      })
   end
 
   def create
@@ -39,18 +53,16 @@ def index
 
   def destroy
     @post = Post.find(params[:id])
-
     if @post.destroy
-      render json: { status: 'Success', message: 'Post deleted sucessfully' }, status: :ok
+      render json: { status: 200, message: 'Post deleted sucessfully' }, status: :ok
     else
-      render json: { status: 'Failed', message: 'Failed to delete Post' }, status: :bad_request
+      render json: { status: 400, message: 'Failed to delete Post' }, status: :bad_request
     end
   end
 
   private
 
   def post_params
-    # params.require(:post).permit(:user_id, :author_name, :topic, :content, :post_image)
     params.require(:post).permit(:user_id, :topic, :content, :post_image)
   end
 end
